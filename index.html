@@ -116,19 +116,61 @@ header::after {
 .tab.done .sn   { background: var(--accent3); color: var(--bg); }
 
 /* ===== PANELS ===== */
-.panel { display: none; padding: 22px 28px; position: relative; z-index: 1; }
+.panel { display: none; padding: 16px 20px; position: relative; z-index: 1; }
 .panel.active { display: block; }
 .panel-grid { display: grid; grid-template-columns: 285px 1fr; gap: 18px; min-height: calc(100vh - 170px); }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  header { padding: 10px 14px; gap: 10px; }
+  .logo { font-size: 16px; letter-spacing: 2px; }
+  .subtitle { display: none; }
+  .theme-label { display: none; }
+  .theme-btn { padding: 6px 10px; }
+  .header-right { gap: 6px; }
+  .save-indicator { display: none; }
+  .tabs { padding: 0 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .tab { padding: 11px 12px; font-size: 9px; letter-spacing: 1px; white-space: nowrap; gap: 5px; }
+  .panel { padding: 12px; }
+  .panel-grid { grid-template-columns: 1fr; gap: 12px; min-height: unset; }
+  .panel-grid > div:first-child { overflow-y: visible !important; max-height: none !important; padding-right: 0 !important; }
+  #canvas-container { min-height: 220px; }
+  .upload-zone { padding: 18px 12px; }
+  .upload-zone .icon { font-size: 24px; margin-bottom: 6px; }
+  .upload-zone p { font-size: 11px; }
+  .toolbar { gap: 6px; }
+  .toolbar > span { display: none; }
+  .div-v { display: none; }
+  .btn { padding: 10px 14px; }
+  .srow { grid-template-columns: 1fr; gap: 7px; }
+  th, td { padding: 6px 8px; white-space: nowrap; }
+  #preview-grid { grid-template-columns: 1fr; }
+  .modal { width: 96vw; max-height: 90vh; border-radius: 8px; }
+  .modal-header { padding: 14px 16px 12px; }
+  .modal-title { font-size: 12px; }
+  .modal-body { padding: 16px; font-size: 12px; }
+  .modal-footer { padding: 12px 16px; flex-wrap: wrap; gap: 8px; }
+  .modal-footer .copy { font-size: 10px; width: 100%; }
+  .modal-body .field-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+  .card { padding: 12px; }
+  .card-title { font-size: 9px; margin-bottom: 10px; }
+  .info-text { font-size: 11px; }
+}
+@media (max-width: 400px) {
+  .logo { font-size: 13px; }
+  .tab { font-size: 8px; padding: 10px 8px; }
+}
 
 /* ===== CARDS ===== */
 .card {
   background: var(--surface); border: 1px solid var(--border);
-  border-radius: 8px; padding: 16px; position: relative; overflow: hidden;
+  border-radius: 8px; padding: 16px; position: relative;
   box-shadow: var(--shadow); transition: background 0.25s, border-color 0.25s;
 }
 .card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
   background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 8px 8px 0 0; z-index: 1;
 }
 .card-title {
   font-family: 'Orbitron', sans-serif; font-size: 10px; font-weight: 700;
@@ -265,6 +307,95 @@ tr.sel-row td { background: rgba(128,200,255,0.07); }
 ::-webkit-scrollbar-track { background: var(--surface); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* ===== HELP MODAL ===== */
+.modal-backdrop {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0,0,0,0.7);
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(4px);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.25s;
+}
+.modal-backdrop.open { opacity: 1; pointer-events: auto; }
+.modal {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; width: min(720px, 92vw); max-height: 85vh;
+  display: flex; flex-direction: column;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+  transform: translateY(16px); transition: transform 0.25s;
+  position: relative; overflow: hidden;
+}
+.modal-backdrop.open .modal { transform: translateY(0); }
+.modal::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+}
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 22px 14px; border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.modal-title {
+  font-family: 'Orbitron', sans-serif; font-size: 14px; font-weight: 900;
+  color: var(--accent); letter-spacing: 2px;
+}
+.modal-title span { color: var(--accent2); }
+.modal-close {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--surface2); border: 1px solid var(--border);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 16px; color: var(--text-dim); transition: all 0.2s;
+}
+.modal-close:hover { border-color: var(--accent2); color: var(--accent2); }
+.modal-body {
+  overflow-y: auto; padding: 22px;
+  font-size: 13px; line-height: 1.75; color: var(--text);
+}
+.modal-body h2 {
+  font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: 700;
+  letter-spacing: 2px; color: var(--accent); margin: 22px 0 10px;
+  padding-bottom: 6px; border-bottom: 1px solid var(--border);
+}
+.modal-body h2:first-child { margin-top: 0; }
+.modal-body p { margin-bottom: 10px; color: var(--text-dim); }
+.modal-body p strong { color: var(--text); }
+.modal-body ul { list-style: none; padding: 0; margin-bottom: 10px; }
+.modal-body ul li {
+  padding: 5px 0 5px 18px; color: var(--text-dim); position: relative;
+}
+.modal-body ul li::before {
+  content: '▸'; position: absolute; left: 0; color: var(--accent);
+}
+.modal-body code {
+  font-family: 'Share Tech Mono', monospace; font-size: 11px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 3px; padding: 1px 6px; color: var(--accent2);
+}
+.modal-body .field-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(140px,1fr));
+  gap: 6px; margin-bottom: 12px;
+}
+.modal-body .field-chip {
+  font-family: 'Share Tech Mono', monospace; font-size: 11px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 4px; padding: 4px 9px; color: var(--accent);
+}
+.modal-body .note {
+  background: rgba(0,212,255,0.06); border: 1px solid rgba(0,212,255,0.2);
+  border-radius: 6px; padding: 10px 14px; margin-bottom: 12px;
+}
+[data-theme="light"] .modal-body .note {
+  background: rgba(0,119,170,0.06); border-color: rgba(0,119,170,0.2);
+}
+.modal-footer {
+  padding: 14px 22px; border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.modal-footer .copy {
+  font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--text-dim);
+}
 </style>
 </head>
 <body>
@@ -276,12 +407,106 @@ tr.sel-row td { background: rgba(128,200,255,0.07); }
   </div>
   <div class="header-right">
     <span class="save-indicator" id="save-ind">✓ SALVATO</span>
+    <button class="theme-btn" onclick="openHelp()">
+      <span>📖</span>
+      <span class="theme-label">GUIDA</span>
+    </button>
     <button class="theme-btn" onclick="toggleTheme()">
       <span id="theme-icon">☀️</span>
       <span class="theme-label" id="theme-lbl">GIORNO</span>
     </button>
   </div>
 </header>
+
+<!-- ==================== HELP MODAL ==================== -->
+<div class="modal-backdrop" id="help-backdrop" onclick="closeHelpOutside(event)">
+  <div class="modal" id="help-modal">
+    <div class="modal-header">
+      <div class="modal-title">QSL<span>forge</span> · GUIDA</div>
+      <div class="modal-close" onclick="closeHelp()">×</div>
+    </div>
+    <div class="modal-body">
+
+      <h2>📡 COS'È QSLFORGE</h2>
+      <p>
+        <strong>QSLforge</strong> è un generatore gratuito di QSL card per radioamatori.
+        Importa il tuo log in formato ADIF, posiziona i campi sull'immagine QSL e genera
+        le card pronte da stampare o inviare digitalmente.
+      </p>
+      <div class="note">
+        🔒 <strong>Privacy garantita:</strong> tutto viene elaborato localmente nel tuo browser.
+        Nessun dato viene inviato a server esterni. Il log e le immagini non lasciano mai il tuo dispositivo.
+      </div>
+
+      <h2>🔧 COME SI USA</h2>
+      <ul>
+        <li><strong>Step 1 — Setup QSL:</strong> carica l'immagine della tua QSL card (JPG, PNG, WebP).
+            Clicca i campi dall'elenco per aggiungerli, trascinali nella posizione desiderata.
+            Per ogni campo puoi impostare font, dimensione, colore, grassetto, ombra e allineamento.</li>
+        <li><strong>Step 2 — Importa log:</strong> carica il file <code>.adi</code> o <code>.adif</code>.
+            Seleziona i QSO per cui vuoi generare le card usando le checkbox.</li>
+        <li><strong>Step 3 — Genera:</strong> clicca "Genera tutte" per creare le QSL.
+            Scarica le immagini singolarmente o tutte in un archivio ZIP.</li>
+      </ul>
+
+      <h2>📋 CAMPI ADIF SUPPORTATI</h2>
+      <div class="field-grid">
+        <span class="field-chip">CALL</span>
+        <span class="field-chip">QSO_DATE</span>
+        <span class="field-chip">TIME_ON</span>
+        <span class="field-chip">BAND</span>
+        <span class="field-chip">FREQ</span>
+        <span class="field-chip">MODE</span>
+        <span class="field-chip">RST_SENT</span>
+        <span class="field-chip">RST_RCVD</span>
+        <span class="field-chip">NAME</span>
+        <span class="field-chip">QTH</span>
+        <span class="field-chip">GRIDSQUARE</span>
+        <span class="field-chip">DXCC</span>
+        <span class="field-chip">TX_PWR</span>
+        <span class="field-chip">COMMENT</span>
+        <span class="field-chip">OPERATOR</span>
+        <span class="field-chip">IOTA</span>
+        <span class="field-chip">CQZ</span>
+        <span class="field-chip">ITUZ</span>
+        <span class="field-chip">STATE</span>
+        <span class="field-chip">CONT</span>
+      </div>
+      <p>La data viene formattata come <code>DD/MM/YYYY</code>, l'ora come <code>HH:MM</code>.</p>
+
+      <h2>💾 SALVATAGGIO CONFIGURAZIONE</h2>
+      <p>
+        Posizioni e impostazioni di ogni campo vengono salvate automaticamente nel browser
+        (<code>localStorage</code>) e ripristinate alla prossima apertura.
+        Puoi anche esportare la configurazione in un file <code>.json</code> e reimportarla
+        su un altro dispositivo o browser tramite i pulsanti nella scheda Setup.
+      </p>
+
+      <h2>🌍 LINGUE</h2>
+      <p>
+        QSLforge supporta la localizzazione tramite file JSON nella cartella <code>locales/</code>.
+        Sono inclusi italiano (<code>it.json</code>) e inglese (<code>en.json</code>).
+        Per aggiungere una lingua crea <code>locales/xx.json</code> con le stesse chiavi tradotte,
+        poi imposta <code>localStorage.setItem('qslforge_lang','xx')</code> nella console del browser.
+      </p>
+
+      <h2>⚖️ LICENZA</h2>
+      <p>
+        QSLforge è software libero rilasciato sotto licenza <strong>MIT</strong>.<br>
+        © 2026 <strong>IU8TVG</strong> — libero di usare, modificare e redistribuire
+        con obbligo di mantenere il copyright originale.
+      </p>
+
+    </div>
+    <div class="modal-footer">
+      <span class="copy">© 2026 IU8TVG · MIT License</span>
+      <div style="display:flex;gap:8px;">
+        <a href="./README.md" target="_blank" class="btn btn-secondary" style="text-decoration:none;">📄 README</a>
+        <button class="btn btn-primary" onclick="closeHelp()">CHIUDI</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="tabs">
   <div class="tab active" onclick="go(0)" id="tab0"><span class="sn">1</span> SETUP QSL</div>
@@ -294,7 +519,7 @@ tr.sel-row td { background: rgba(128,200,255,0.07); }
   <div class="panel-grid">
 
     <!-- LEFT -->
-    <div style="display:flex;flex-direction:column;gap:13px;overflow-y:auto;max-height:calc(100vh - 155px);padding-right:4px;">
+    <div style="display:flex;flex-direction:column;gap:13px;overflow-y:visible;padding-right:4px;">
 
       <div class="card">
         <div class="card-title">📷 IMMAGINE QSL</div>
@@ -681,7 +906,9 @@ function renderOv() {
       <div class="ov-label" style="font-size:${sz}px;color:${cfg.color};${cfg.bold?'font-weight:bold;':''}font-family:${cfg.fontFamily};">${esc(fd?fd.ex:key)}</div>
       <div class="ov-rm" onclick="rmField('${key}',event)">×</div>`;
 
-    el.querySelector('.ov-label').addEventListener('mousedown', mkDrag(el,key,cv,ol,ot));
+    const lbl = el.querySelector('.ov-label');
+    lbl.addEventListener('mousedown', mkDrag(el,key,cv,ol,ot));
+    lbl.addEventListener('touchstart', mkDragTouch(el,key,cv,ol,ot), {passive:false});
     el.addEventListener('click', e => { e.stopPropagation(); selectKey(key); });
     layer.appendChild(el);
   });
@@ -700,6 +927,25 @@ function mkDrag(el, key, cv, ol, ot) {
     };
     const up = () => { savePlaced(); document.removeEventListener('mousemove',mv); document.removeEventListener('mouseup',up); };
     document.addEventListener('mousemove',mv); document.addEventListener('mouseup',up);
+  };
+}
+
+function mkDragTouch(el, key, cv, ol, ot) {
+  return function(e) {
+    e.preventDefault();
+    const t0 = e.touches[0];
+    const sx=t0.clientX, sy=t0.clientY, sl=parseFloat(el.style.left), st=parseFloat(el.style.top);
+    const mv = ev => {
+      const t = ev.touches[0];
+      const nl = sl+t.clientX-sx, nt = st+t.clientY-sy;
+      el.style.left = nl+'px'; el.style.top = nt+'px';
+      placed[key].x = clamp((nl-ol)/cv.width *100, 0,100);
+      placed[key].y = clamp((nt-ot)/cv.height*100, 0,100);
+      updPosInputs(key);
+    };
+    const up = () => { savePlaced(); document.removeEventListener('touchmove',mv); document.removeEventListener('touchend',up); };
+    document.addEventListener('touchmove',mv, {passive:false});
+    document.addEventListener('touchend',up);
   };
 }
 
@@ -973,6 +1219,23 @@ function ldScript(src) { return new Promise((r,j)=>{ if(document.querySelector(`
 function tick() { return new Promise(r=>setTimeout(r,10)); }
 function clamp(v,a,b) { return Math.max(a,Math.min(b,v)); }
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+/* ============================================================
+   HELP MODAL
+   ============================================================ */
+function openHelp() {
+  document.getElementById('help-backdrop').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeHelp() {
+  document.getElementById('help-backdrop').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeHelpOutside(e) {
+  if (e.target === document.getElementById('help-backdrop')) closeHelp();
+}
+// Close on Escape key
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeHelp(); });
 
 /* ============================================================
    START
