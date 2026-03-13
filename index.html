@@ -528,6 +528,9 @@ tr.sel-row td { background: rgba(128,200,255,0.07); }
         <span class="field-chip">ITUZ</span>
         <span class="field-chip">STATE</span>
         <span class="field-chip">CONT</span>
+        <span class="field-chip">POTA_REF</span>
+        <span class="field-chip">SOTA_REF</span>
+        <span class="field-chip">WWFF_REF</span>
       </div>
       <p>La data viene formattata come <code>DD/MM/YYYY</code>, l'ora come <code>HH:MM</code>.</p>
 
@@ -561,6 +564,46 @@ tr.sel-row td { background: rgba(128,200,255,0.07); }
         <a href="./README.md" target="_blank" class="btn btn-secondary" style="text-decoration:none;">📄 README</a>
         <button class="btn btn-primary" onclick="closeHelp()">CHIUDI</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== WELCOME MODAL ==================== -->
+<div class="modal-backdrop" id="welcome-backdrop">
+  <div class="modal" style="max-width:520px;">
+    <div class="modal-header">
+      <div class="modal-title">QSL<span>forge</span></div>
+    </div>
+    <div class="modal-body">
+      <div style="text-align:center;margin-bottom:18px;">
+        <div style="font-size:48px;margin-bottom:8px;">📡</div>
+        <div style="font-family:'Orbitron',sans-serif;font-size:13px;color:var(--text);" id="wlc-title">Benvenuto in QSLforge</div>
+        <div style="font-size:12px;color:var(--text-dim);margin-top:6px;" id="wlc-sub">Generatore di QSL card per radioamatori · IU8TVG</div>
+      </div>
+
+      <div class="note" style="margin-bottom:14px;">
+        <div style="font-size:11px;font-family:'Orbitron',sans-serif;letter-spacing:1px;color:var(--accent);margin-bottom:6px;" id="wlc-disclaimer-title">⚠ DISCLAIMER</div>
+        <p style="margin:0;font-size:12px;line-height:1.7;" id="wlc-disclaimer-text">
+          Questo software è fornito <strong>così com'è</strong> (<em>as-is</em>), senza garanzie di alcun tipo,
+          esplicite o implicite. L'autore non si assume responsabilità per eventuali errori,
+          perdita di dati o danni derivanti dall'uso del programma.
+        </p>
+      </div>
+
+      <div style="background:rgba(255,107,53,0.07);border:1px solid rgba(255,107,53,0.2);border-radius:6px;padding:10px 14px;">
+        <div style="font-size:11px;font-family:'Orbitron',sans-serif;letter-spacing:1px;color:var(--accent2);margin-bottom:6px;" id="wlc-ai-title">🤖 SVILUPPATO CON AI GENERATIVA</div>
+        <p style="margin:0;font-size:12px;line-height:1.7;color:var(--text-dim);" id="wlc-ai-text">
+          Questo programma è stato realizzato con il supporto di un'intelligenza artificiale generativa (<strong>Claude</strong> di Anthropic).
+          Il codice è stato verificato e adattato dall'autore, ma potrebbe contenere imperfezioni.
+        </p>
+      </div>
+    </div>
+    <div class="modal-footer" style="justify-content:flex-end;gap:10px;align-items:center;">
+      <label style="display:flex;align-items:center;gap:7px;font-size:11px;color:var(--text-dim);cursor:pointer;font-family:'Share Tech Mono',monospace;">
+        <input type="checkbox" id="wlc-dont-show" style="accent-color:var(--accent);cursor:pointer;">
+        <span id="wlc-dont-show-lbl">Non mostrare più</span>
+      </label>
+      <button class="btn btn-primary" onclick="closeWelcome()" id="wlc-ok-btn">OK, INIZIA</button>
     </div>
   </div>
 </div>
@@ -629,7 +672,8 @@ tr.sel-row td { background: rgba(128,200,255,0.07); }
         <div style="display:flex;gap:7px;flex-wrap:wrap;">
           <button class="btn btn-secondary" onclick="exportCfg()" style="font-size:9px;padding:6px 11px;">⬇ ESPORTA</button>
           <button class="btn btn-secondary" onclick="document.getElementById('imp-cfg').click()" style="font-size:9px;padding:6px 11px;">⬆ IMPORTA</button>
-          <button class="btn btn-danger"    onclick="clearAll()"  style="font-size:9px;padding:6px 11px;">🗑 RESET</button>
+          <button class="btn btn-danger"    onclick="clearAll()"  style="font-size:9px;padding:6px 11px;">🗑 RESET CAMPI</button>
+          <button class="btn btn-danger"    onclick="resetSavedImg()" style="font-size:9px;padding:6px 11px;">🖼 RESET IMMAGINE</button>
         </div>
         <input type="file" id="imp-cfg" accept=".json" class="hidden">
       </div>
@@ -754,9 +798,20 @@ const I18N_BUILTIN = {
     "field.STATE":       "Stato/Regione",
     "field.CNTY":        "Contea/Provincia",
     "field.CONT":        "Continente",
+    "field.POTA_REF":    "Parks On The Air",
+    "field.SOTA_REF":    "Summits On The Air",
+    "field.WWFF_REF":    "World Flora & Fauna",
     "theme.day":         "GIORNO",
     "theme.night":       "NOTTE",
-    "saved":             "✓ SALVATO"
+    "saved":             "✓ SALVATO",
+    "welcome.title":          "Benvenuto in QSLforge",
+    "welcome.sub":            "Generatore di QSL card per radioamatori · IU8TVG",
+    "welcome.disclaimer.title": "⚠ DISCLAIMER",
+    "welcome.disclaimer.text":  "Questo software è fornito <strong>così com'è</strong> (<em>as-is</em>), senza garanzie di alcun tipo, esplicite o implicite. L'autore non si assume responsabilità per eventuali errori, perdita di dati o danni derivanti dall'uso del programma.",
+    "welcome.ai.title":       "🤖 SVILUPPATO CON AI GENERATIVA",
+    "welcome.ai.text":        "Questo programma è stato realizzato con il supporto di un'intelligenza artificiale generativa (<strong>Claude</strong> di Anthropic). Il codice è stato verificato e adattato dall'autore, ma potrebbe contenere imperfezioni.",
+    "welcome.dontshow":       "Non mostrare più",
+    "welcome.ok":             "OK, INIZIA"
   }
 };
 
@@ -801,6 +856,9 @@ const FIELDS = [
   { key:'ITUZ',       ex:'28'          },
   { key:'STATE',      ex:'Veneto'      },
   { key:'CONT',       ex:'EU'          },
+  { key:'POTA_REF',   ex:'K-0001'      },
+  { key:'SOTA_REF',   ex:'I/LO-001'    },
+  { key:'WWFF_REF',   ex:'IKFF-0001'   },
 ];
 
 /* ============================================================
@@ -828,6 +886,8 @@ async function boot() {
   wireDrops();
   wireImportCfg();
   restoreCollapsed();
+  await loadImgFromStorage();
+  maybeShowWelcome();
 }
 
 /* ============================================================
@@ -949,6 +1009,123 @@ function mkDrop(zId, iId, fn) {
 /* ============================================================
    IMAGE
    ============================================================ */
+/* ============================================================
+   IMAGE PERSISTENCE  (IndexedDB + localStorage fallback)
+   ============================================================ */
+const IDB_NAME    = 'qslforge';
+const IDB_STORE   = 'assets';
+const IDB_IMG_KEY = 'qsl_image';
+const IDB_IMG_META= 'qsl_image_meta';
+const LS_IMG_KEY  = 'qslforge_img_b64';   // fallback for small images
+const MAX_LS_BYTES = 2 * 1024 * 1024;     // 2 MB threshold
+
+function openIDB() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open(IDB_NAME, 1);
+    req.onupgradeneeded = e => e.target.result.createObjectStore(IDB_STORE);
+    req.onsuccess = e => res(e.target.result);
+    req.onerror   = e => rej(e.target.error);
+  });
+}
+
+async function idbSet(key, value) {
+  const db = await openIDB();
+  return new Promise((res, rej) => {
+    const tx  = db.transaction(IDB_STORE, 'readwrite');
+    const req = tx.objectStore(IDB_STORE).put(value, key);
+    req.onsuccess = () => res();
+    req.onerror   = e => rej(e.target.error);
+  });
+}
+
+async function idbGet(key) {
+  const db = await openIDB();
+  return new Promise((res, rej) => {
+    const tx  = db.transaction(IDB_STORE, 'readonly');
+    const req = tx.objectStore(IDB_STORE).get(key);
+    req.onsuccess = e => res(e.target.result);
+    req.onerror   = e => rej(e.target.error);
+  });
+}
+
+async function idbDel(key) {
+  const db = await openIDB();
+  return new Promise((res, rej) => {
+    const tx  = db.transaction(IDB_STORE, 'readwrite');
+    const req = tx.objectStore(IDB_STORE).delete(key);
+    req.onsuccess = () => res();
+    req.onerror   = e => rej(e.target.error);
+  });
+}
+
+async function saveImgToStorage(dataUrl, meta) {
+  // Try IndexedDB first (no size limit)
+  try {
+    await idbSet(IDB_IMG_KEY,  dataUrl);
+    await idbSet(IDB_IMG_META, meta);
+    localStorage.removeItem(LS_IMG_KEY);   // clear old LS copy if present
+    console.log('[img] saved to IndexedDB');
+    return;
+  } catch(e) {
+    console.warn('[img] IndexedDB save failed, trying localStorage', e);
+  }
+  // Fallback: localStorage only if image is small enough
+  if (dataUrl.length < MAX_LS_BYTES) {
+    try {
+      localStorage.setItem(LS_IMG_KEY, dataUrl);
+      localStorage.setItem(LS_IMG_KEY + '_meta', JSON.stringify(meta));
+      console.log('[img] saved to localStorage (fallback)');
+    } catch(e) {
+      console.warn('[img] localStorage save failed too (image too large)', e);
+    }
+  } else {
+    console.warn('[img] Image too large for localStorage, will not persist');
+  }
+}
+
+async function loadImgFromStorage() {
+  // Try IndexedDB
+  try {
+    const dataUrl = await idbGet(IDB_IMG_KEY);
+    const meta    = await idbGet(IDB_IMG_META);
+    if (dataUrl) { applyImgDataUrl(dataUrl, meta); return; }
+  } catch(e) {
+    console.warn('[img] IndexedDB read failed', e);
+  }
+  // Fallback: localStorage
+  try {
+    const dataUrl = localStorage.getItem(LS_IMG_KEY);
+    const rawMeta = localStorage.getItem(LS_IMG_KEY + '_meta');
+    const meta    = rawMeta ? JSON.parse(rawMeta) : null;
+    if (dataUrl) { applyImgDataUrl(dataUrl, meta); return; }
+  } catch(e) {
+    console.warn('[img] localStorage read failed', e);
+  }
+}
+
+function applyImgDataUrl(dataUrl, meta) {
+  const img = new Image();
+  img.onload = () => {
+    qslImgSrc = dataUrl; qslImgEl = img;
+    document.getElementById('canvas-ph').classList.add('hidden');
+    document.getElementById('qsl-canvas').classList.remove('hidden');
+    renderCanvas();
+    const name = meta ? meta.name : 'immagine salvata';
+    const size = meta ? ` · ${img.width}×${img.height}px` : '';
+    document.getElementById('img-status').innerHTML =
+      `<span class="badge badge-ok">✓ ${esc(name)}${size} <span style="opacity:.6;font-size:9px;">(memorizzata)</span></span>`;
+  };
+  img.src = dataUrl;
+}
+
+async function clearSavedImg() {
+  try { await idbDel(IDB_IMG_KEY); await idbDel(IDB_IMG_META); } catch {}
+  try { localStorage.removeItem(LS_IMG_KEY); localStorage.removeItem(LS_IMG_KEY+'_meta'); } catch {}
+}
+
+/* ============================================================
+   IMAGE LOAD  (from file picker / drop)
+   ============================================================ */
 function loadImg(file) {
   const rd = new FileReader();
   rd.onload = e => {
@@ -960,6 +1137,8 @@ function loadImg(file) {
       renderCanvas();
       document.getElementById('img-status').innerHTML =
         `<span class="badge badge-ok">✓ ${esc(file.name)} · ${img.width}×${img.height}px</span>`;
+      // persist
+      saveImgToStorage(e.target.result, { name: file.name });
     };
     img.src = e.target.result;
   };
@@ -1091,6 +1270,18 @@ function rmField(key, e) {
   e.stopPropagation(); delete placed[key];
   if (selKey===key) { selKey=null; document.getElementById('fset-card').style.display='none'; }
   savePlaced(); renderOv(); renderFields();
+}
+
+async function resetSavedImg() {
+  if (!confirm('Rimuovere l\'immagine QSL salvata? Dovrai ricaricarla manualmente.')) return;
+  await clearSavedImg();
+  qslImgSrc = null; qslImgEl = null;
+  document.getElementById('canvas-ph').classList.remove('hidden');
+  document.getElementById('qsl-canvas').classList.add('hidden');
+  document.getElementById('img-status').innerHTML = '';
+  document.getElementById('ov-layer').innerHTML = '';
+  document.getElementById('canvas-info').textContent = '';
+  flashSaved();
 }
 
 function clearAll() {
@@ -1391,6 +1582,28 @@ function restoreCollapsed() {
       requestAnimationFrame(() => { body.style.transition = ''; });
     }
   });
+}
+
+/* ============================================================
+   WELCOME MODAL
+   ============================================================ */
+const LS_WELCOME = 'qslforge_welcome_seen';
+
+function openWelcome() {
+  document.getElementById('welcome-backdrop').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeWelcome() {
+  if (document.getElementById('wlc-dont-show').checked) {
+    localStorage.setItem(LS_WELCOME, '1');
+  }
+  document.getElementById('welcome-backdrop').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function maybeShowWelcome() {
+  if (!localStorage.getItem(LS_WELCOME)) openWelcome();
 }
 
 /* ============================================================

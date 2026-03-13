@@ -20,7 +20,18 @@
   "field.STATE":       "Stato/Regione",
   "field.CNTY":        "Contea/Provincia",
   "field.CONT":        "Continente",
+  "field.POTA_REF":    "Parks On The Air",
+  "field.SOTA_REF":    "Summits On The Air",
+  "field.WWFF_REF":    "World Flora & Fauna",
   "theme.day":         "GIORNO",
   "theme.night":       "NOTTE",
-  "saved":             "✓ SALVATO"
+  "saved":             "✓ SALVATO",
+  "welcome.title":          "Benvenuto in QSLforge",
+  "welcome.sub":            "Generatore di QSL card per radioamatori · IU8TVG",
+  "welcome.disclaimer.title": "⚠ DISCLAIMER",
+  "welcome.disclaimer.text":  "Questo software è fornito <strong>così com'è</strong> (<em>as-is</em>), senza garanzie di alcun tipo, esplicite o implicite. L'autore non si assume responsabilità per eventuali errori, perdita di dati o danni derivanti dall'uso del programma.",
+  "welcome.ai.title":       "🤖 SVILUPPATO CON AI GENERATIVA",
+  "welcome.ai.text":        "Questo programma è stato realizzato con il supporto di un'intelligenza artificiale generativa (<strong>Claude</strong> di Anthropic). Il codice è stato verificato e adattato dall'autore, ma potrebbe contenere imperfezioni.",
+  "welcome.dontshow":       "Non mostrare più",
+  "welcome.ok":             "OK, INIZIA"
 }

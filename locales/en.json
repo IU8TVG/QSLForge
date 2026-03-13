@@ -20,7 +20,18 @@
   "field.STATE":       "State/Region",
   "field.CNTY":        "County/Province",
   "field.CONT":        "Continent",
+  "field.POTA_REF":    "Parks On The Air",
+  "field.SOTA_REF":    "Summits On The Air",
+  "field.WWFF_REF":    "World Flora & Fauna",
   "theme.day":         "DAY",
   "theme.night":       "NIGHT",
-  "saved":             "✓ SAVED"
+  "saved":             "✓ SAVED",
+  "welcome.title":          "Welcome to QSLforge",
+  "welcome.sub":            "Amateur Radio QSL Card Generator · IU8TVG",
+  "welcome.disclaimer.title": "⚠ DISCLAIMER",
+  "welcome.disclaimer.text":  "This software is provided <strong>as-is</strong>, without warranties of any kind, express or implied. The author assumes no responsibility for errors, data loss or damages arising from use of the program.",
+  "welcome.ai.title":       "🤖 BUILT WITH GENERATIVE AI",
+  "welcome.ai.text":        "This program was developed with the assistance of a generative AI (<strong>Claude</strong> by Anthropic). The code has been reviewed and adapted by the author, but may contain imperfections.",
+  "welcome.dontshow":       "Don't show again",
+  "welcome.ok":             "OK, GET STARTED"
 }
