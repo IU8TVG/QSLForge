@@ -30,7 +30,7 @@ No server, no registration, no data collection — everything runs locally in yo
 
 ## Usage
 
-1. Open `qsl-generator.html` in any modern browser — no installation needed.
+1. Open `index.html` in any modern browser — no installation needed.
 2. **Step 1 — Setup**: load your QSL image, click fields to place them, drag to position.
 3. **Step 2 — Import log**: load your `.adi` / `.adif` file, select the QSOs.
 4. **Step 3 — Generate**: generate all cards and download as PNG or ZIP.
@@ -40,7 +40,7 @@ No server, no registration, no data collection — everything runs locally in yo
 ## File structure
 
 ```
-qsl-generator.html   ← main application (single file, works standalone)
+index.html           ← main application (single file, works standalone)
 LICENSE              ← MIT License
 README.md            ← this file
 locales/
