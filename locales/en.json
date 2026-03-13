@@ -33,5 +33,12 @@
   "welcome.ai.title":       "🤖 BUILT WITH GENERATIVE AI",
   "welcome.ai.text":        "This program was developed with the assistance of a generative AI (<strong>Claude</strong> by Anthropic). The code has been reviewed and adapted by the author, but may contain imperfections.",
   "welcome.dontshow":       "Don't show again",
-  "welcome.ok":             "OK, GET STARTED"
+  "welcome.ok":             "OK, GET STARTED",
+  "global.title":           "🔤 GLOBAL TEXT STYLE",
+  "global.desc":            "Apply size and/or color to all placed fields. Also used as defaults for new fields.",
+  "global.size":            "SIZE (px)",
+  "global.color":           "COLOR",
+  "global.apply_all":       "✓ APPLY ALL",
+  "global.apply_size":      "SIZE ONLY",
+  "global.apply_color":     "COLOR ONLY"
 }

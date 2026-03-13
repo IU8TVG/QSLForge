@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QSLforge · QSL Card Generator</title>
+<title>QSLforge v1.0b · QSL Card Generator</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap');
 
@@ -456,7 +456,7 @@ tr.sel-row td { background: rgba(128,200,255,0.07); }
 <header>
   <div>
     <div class="logo">QSL<span>forge</span></div>
-    <div class="subtitle">AMATEUR RADIO · QSL CARD GENERATOR</div>
+    <div class="subtitle">AMATEUR RADIO · QSL CARD GENERATOR · v1.0b</div>
   </div>
   <div class="header-right">
     <span class="save-indicator" id="save-ind">✓ SALVATO</span>
@@ -559,7 +559,7 @@ tr.sel-row td { background: rgba(128,200,255,0.07); }
 
     </div>
     <div class="modal-footer">
-      <span class="copy">© 2026 IU8TVG · MIT License</span>
+      <span class="copy">© 2026 IU8TVG · MIT License · v1.0b</span>
       <div style="display:flex;gap:8px;">
         <a href="./README.md" target="_blank" class="btn btn-secondary" style="text-decoration:none;">📄 README</a>
         <button class="btn btn-primary" onclick="closeHelp()">CHIUDI</button>
@@ -653,16 +653,35 @@ tr.sel-row td { background: rgba(128,200,255,0.07); }
       </div>
 
       <div class="card">
-        <div class="card-title">🔤 DIMENSIONE TESTO GLOBALE</div>
-        <p class="info-text">Applica la stessa dimensione font a tutti i campi posizionati in un colpo solo.</p>
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-          <div class="ig" style="flex:1;min-width:80px;">
-            <label>DIMENSIONE (px)</label>
-            <input type="number" id="global-fs" value="28" min="6" max="400" style="width:100%;">
+        <div class="card-title" data-i18n="global.title">🔤 STILE TESTO GLOBALE</div>
+        <p class="info-text" data-i18n="global.desc">Applica dimensione e/o colore a tutti i campi posizionati. Usati anche come default per i nuovi campi.</p>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div class="srow">
+            <div class="ig">
+              <label data-i18n="global.size">DIMENSIONE (px)</label>
+              <input type="number" id="global-fs" value="28" min="6" max="400" style="width:100%;"
+                onchange="saveGlobalDefaults()">
+            </div>
+            <div class="ig">
+              <label data-i18n="global.color">COLORE</label>
+              <div class="crow">
+                <input type="color" id="global-color" value="#ffffff"
+                  oninput="document.getElementById('global-color-val').textContent=this.value;saveGlobalDefaults()">
+                <span id="global-color-val" style="font-family:'Share Tech Mono',monospace;font-size:10px;">#ffffff</span>
+              </div>
+            </div>
           </div>
-          <button class="btn btn-primary" onclick="applyGlobalFontSize()" style="margin-top:14px;">
-            ✓ APPLICA A TUTTI
-          </button>
+          <div style="display:flex;gap:7px;flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="applyGlobalStyle('both')" style="flex:1;" data-i18n="global.apply_all">
+              ✓ APPLICA TUTTO
+            </button>
+            <button class="btn btn-secondary" onclick="applyGlobalStyle('size')" style="font-size:9px;padding:6px 10px;" data-i18n="global.apply_size">
+              SOLO DIM.
+            </button>
+            <button class="btn btn-secondary" onclick="applyGlobalStyle('color')" style="font-size:9px;padding:6px 10px;" data-i18n="global.apply_color">
+              SOLO COLORE
+            </button>
+          </div>
         </div>
       </div>
 
@@ -811,7 +830,14 @@ const I18N_BUILTIN = {
     "welcome.ai.title":       "🤖 SVILUPPATO CON AI GENERATIVA",
     "welcome.ai.text":        "Questo programma è stato realizzato con il supporto di un'intelligenza artificiale generativa (<strong>Claude</strong> di Anthropic). Il codice è stato verificato e adattato dall'autore, ma potrebbe contenere imperfezioni.",
     "welcome.dontshow":       "Non mostrare più",
-    "welcome.ok":             "OK, INIZIA"
+    "welcome.ok":             "OK, INIZIA",
+    "global.title":           "🔤 STILE TESTO GLOBALE",
+    "global.desc":            "Applica dimensione e/o colore a tutti i campi posizionati. Usati anche come default per i nuovi campi.",
+    "global.size":            "DIMENSIONE (px)",
+    "global.color":           "COLORE",
+    "global.apply_all":       "✓ APPLICA TUTTO",
+    "global.apply_size":      "SOLO DIM.",
+    "global.apply_color":     "SOLO COLORE"
   }
 };
 
@@ -831,6 +857,14 @@ async function loadLocale(l) {
 }
 
 const t = k => TR[k] || k;
+
+function applyI18n() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const val = t(key);
+    if (val !== key) el.textContent = val;
+  });
+}
 
 /* ============================================================
    FIELD DEFINITIONS
@@ -881,11 +915,13 @@ async function boot() {
   await loadLocale(lang);
   loadTheme();
   populateLangSelect();
+  applyI18n();
   loadPlaced();
   renderFields();
   wireDrops();
   wireImportCfg();
   restoreCollapsed();
+  loadGlobalDefaults();
   await loadImgFromStorage();
   maybeShowWelcome();
 }
@@ -934,24 +970,57 @@ async function switchLang(code) {
   localStorage.setItem('qslforge_lang', lang);
   await loadLocale(lang);
   applyTheme();    // re-render theme labels in new lang
+  applyI18n();     // re-render all data-i18n elements
   renderFields();  // re-render field descriptions
 }
 
 /* ============================================================
    GLOBAL FONT SIZE
    ============================================================ */
-function applyGlobalFontSize() {
-  const val = parseInt(document.getElementById('global-fs').value);
-  if (isNaN(val) || val < 6 || val > 400) {
-    alert('Inserisci un valore tra 6 e 400');
+const LS_GLOBAL = 'qslforge_global_style';
+
+function saveGlobalDefaults() {
+  const fs  = parseInt(document.getElementById('global-fs').value);
+  const col = document.getElementById('global-color').value;
+  try { localStorage.setItem(LS_GLOBAL, JSON.stringify({ fontSize: fs, color: col })); } catch {}
+}
+
+function loadGlobalDefaults() {
+  try {
+    const raw = localStorage.getItem(LS_GLOBAL);
+    if (!raw) return;
+    const d = JSON.parse(raw);
+    if (d.fontSize) {
+      document.getElementById('global-fs').value = d.fontSize;
+    }
+    if (d.color) {
+      document.getElementById('global-color').value = d.color;
+      document.getElementById('global-color-val').textContent = d.color;
+    }
+  } catch {}
+}
+
+function getGlobalDefaults() {
+  const fs  = parseInt(document.getElementById('global-fs').value) || 28;
+  const col = document.getElementById('global-color').value || '#ffffff';
+  return { fontSize: fs, color: col };
+}
+
+function applyGlobalStyle(mode) {
+  const { fontSize, color } = getGlobalDefaults();
+  if (mode !== 'color' && (isNaN(fontSize) || fontSize < 6 || fontSize > 400)) {
+    alert('Inserisci una dimensione valida (6–400)');
     return;
   }
   const keys = Object.keys(placed);
   if (!keys.length) { alert('Nessun campo posizionato!'); return; }
-  keys.forEach(k => { placed[k].fontSize = val; });
+  keys.forEach(k => {
+    if (mode === 'both' || mode === 'size')  placed[k].fontSize = fontSize;
+    if (mode === 'both' || mode === 'color') placed[k].color    = color;
+  });
+  saveGlobalDefaults();
   savePlaced();
   renderOv();
-  // if a field settings panel is open, refresh it
   if (selKey) showFSet(selKey);
   flashSaved();
 }
@@ -1114,6 +1183,7 @@ function applyImgDataUrl(dataUrl, meta) {
     const size = meta ? ` · ${img.width}×${img.height}px` : '';
     document.getElementById('img-status').innerHTML =
       `<span class="badge badge-ok">✓ ${esc(name)}${size} <span style="opacity:.6;font-size:9px;">(memorizzata)</span></span>`;
+    autoCollapseImgCard();
   };
   img.src = dataUrl;
 }
@@ -1139,6 +1209,7 @@ function loadImg(file) {
         `<span class="badge badge-ok">✓ ${esc(file.name)} · ${img.width}×${img.height}px</span>`;
       // persist
       saveImgToStorage(e.target.result, { name: file.name });
+      autoCollapseImgCard();
     };
     img.src = e.target.result;
   };
@@ -1180,8 +1251,10 @@ function renderFields() {
 
 function addField(key) {
   if (!qslImgEl) { alert('Carica prima l\'immagine QSL!'); return; }
-  if (!placed[key])
-    placed[key] = { x:50, y:50, fontSize:28, color:'#ffffff', bold:false, fontFamily:'Arial', shadow:true, align:'left' };
+  if (!placed[key]) {
+    const gd = getGlobalDefaults();
+    placed[key] = { x:50, y:50, fontSize:gd.fontSize, color:gd.color, bold:false, fontFamily:'Arial', shadow:true, align:'left' };
+  }
   savePlaced(); renderOv(); renderFields(); selectKey(key);
 }
 
@@ -1555,6 +1628,11 @@ function loadCollapsed() {
 
 function saveCollapsed(state) {
   try { localStorage.setItem(COLLAPSED_KEY, JSON.stringify(state)); } catch {}
+}
+
+function autoCollapseImgCard() {
+  const body = document.getElementById('cb-img');
+  if (body && !body.classList.contains('collapsed')) toggleCard('img');
 }
 
 function toggleCard(id) {

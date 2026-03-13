@@ -33,5 +33,12 @@
   "welcome.ai.title":       "🤖 SVILUPPATO CON AI GENERATIVA",
   "welcome.ai.text":        "Questo programma è stato realizzato con il supporto di un'intelligenza artificiale generativa (<strong>Claude</strong> di Anthropic). Il codice è stato verificato e adattato dall'autore, ma potrebbe contenere imperfezioni.",
   "welcome.dontshow":       "Non mostrare più",
-  "welcome.ok":             "OK, INIZIA"
+  "welcome.ok":             "OK, INIZIA",
+  "global.title":           "🔤 STILE TESTO GLOBALE",
+  "global.desc":            "Applica dimensione e/o colore a tutti i campi posizionati. Usati anche come default per i nuovi campi.",
+  "global.size":            "DIMENSIONE (px)",
+  "global.color":           "COLORE",
+  "global.apply_all":       "✓ APPLICA TUTTO",
+  "global.apply_size":      "SOLO DIM.",
+  "global.apply_color":     "SOLO COLORE"
 }
