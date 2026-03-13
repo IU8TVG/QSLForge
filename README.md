@@ -1,7 +1,7 @@
 # QSLforge
 
 **Amateur Radio QSL Card Generator**  
-*by IU8TVG*
+*by IU8TVG + ClaudeAI*
 
 A free, offline-capable tool to generate QSL cards from ADIF log files.  
 No server, no registration, no data collection — everything runs locally in your browser.
@@ -90,18 +90,6 @@ The only external requests are:
 - **cdnjs.cloudflare.com** (JSZip) — loaded only when downloading a ZIP archive
 
 If you need fully offline operation, download the fonts and embed them in the HTML file.
-
----
-
-## Publishing (free hosting)
-
-| Platform | How |
-|---|---|
-| **GitHub Pages** | Push the repo, go to Settings → Pages → Source → main branch |
-| **Netlify Drop** | Drag the folder to [app.netlify.com/drop](https://app.netlify.com/drop) |
-| **Cloudflare Pages** | Connect the GitHub repo in the Cloudflare dashboard |
-
-All three options are completely free for static sites.
 
 ---
 
