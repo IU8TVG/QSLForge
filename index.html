@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QSLforge v1.0b · QSL Card Generator</title>
+<title>QSLforge v1.1b · QSL Card Generator</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap');
 
@@ -456,7 +456,7 @@ tr.sel-row td { background: rgba(128,200,255,0.07); }
 <header>
   <div>
     <div class="logo">QSL<span>forge</span></div>
-    <div class="subtitle">AMATEUR RADIO · QSL CARD GENERATOR · v1.0b</div>
+    <div class="subtitle">AMATEUR RADIO · QSL CARD GENERATOR · v1.1b</div>
   </div>
   <div class="header-right">
     <span class="save-indicator" id="save-ind">✓ SALVATO</span>
@@ -559,7 +559,7 @@ tr.sel-row td { background: rgba(128,200,255,0.07); }
 
     </div>
     <div class="modal-footer">
-      <span class="copy">© 2026 IU8TVG · MIT License · v1.0b</span>
+      <span class="copy">© 2026 IU8TVG · MIT License · v1.1b</span>
       <div style="display:flex;gap:8px;">
         <a href="./README.md" target="_blank" class="btn btn-secondary" style="text-decoration:none;">📄 README</a>
         <button class="btn btn-primary" onclick="closeHelp()">CHIUDI</button>
@@ -1296,6 +1296,9 @@ function renderOv() {
   const lr  = document.getElementById('canvas-container').getBoundingClientRect();
   const ol  = cr.left - lr.left;
   const ot  = cr.top  - lr.top;
+  // cssScale: ratio between CSS display size and canvas pixel size (accounts for devicePixelRatio etc.)
+  const cssW = cr.width;
+  const cssH = cr.height;
 
   Object.entries(placed).forEach(([key, cfg]) => {
     const fd  = FIELDS.find(f => f.key === key);
@@ -1303,11 +1306,12 @@ function renderOv() {
     el.className = 'ov-el' + (selKey === key ? ' sel' : '');
     el.id = 'ov-' + key;
 
-    const px = (cfg.x/100)*cv.width;
-    const py = (cfg.y/100)*cv.height;
+    const px = (cfg.x/100)*cssW;
+    const py = (cfg.y/100)*cssH;
     el.style.cssText = `position:absolute;left:${ol+px}px;top:${ot+py}px;`;
 
-    const sz = Math.max(9, cfg.fontSize * cvScale * 0.82);
+    // fontSize stored in original image pixels → scale to CSS display pixels
+    const sz = Math.max(9, cfg.fontSize * (cssW / qslImgEl.width));
     el.innerHTML = `
       <div class="ov-label" style="font-size:${sz}px;color:${cfg.color};${cfg.bold?'font-weight:bold;':''}font-family:${cfg.fontFamily};">${esc(fd?fd.ex:key)}</div>
       <div class="ov-rm" onclick="rmField('${key}',event)">×</div>`;
@@ -1327,8 +1331,9 @@ function mkDrag(el, key, cv, ol, ot) {
     const mv = ev => {
       const nl = sl+ev.clientX-sx, nt = st+ev.clientY-sy;
       el.style.left = nl+'px'; el.style.top = nt+'px';
-      placed[key].x = clamp((nl-ol)/cv.width *100, 0,100);
-      placed[key].y = clamp((nt-ot)/cv.height*100, 0,100);
+      const _cr = cv.getBoundingClientRect();
+      placed[key].x = clamp((nl-ol)/_cr.width *100, 0,100);
+      placed[key].y = clamp((nt-ot)/_cr.height*100, 0,100);
       updPosInputs(key);
     };
     const up = () => { savePlaced(); document.removeEventListener('mousemove',mv); document.removeEventListener('mouseup',up); };
@@ -1345,8 +1350,9 @@ function mkDragTouch(el, key, cv, ol, ot) {
       const t = ev.touches[0];
       const nl = sl+t.clientX-sx, nt = st+t.clientY-sy;
       el.style.left = nl+'px'; el.style.top = nt+'px';
-      placed[key].x = clamp((nl-ol)/cv.width *100, 0,100);
-      placed[key].y = clamp((nt-ot)/cv.height*100, 0,100);
+      const _cr = cv.getBoundingClientRect();
+      placed[key].x = clamp((nl-ol)/_cr.width *100, 0,100);
+      placed[key].y = clamp((nt-ot)/_cr.height*100, 0,100);
       updPosInputs(key);
     };
     const up = () => { savePlaced(); document.removeEventListener('touchmove',mv); document.removeEventListener('touchend',up); };
@@ -1563,7 +1569,9 @@ async function genAll() {
 
   const list=[...selQSOs].map(i=>qsos[i]);
   for (let i=0;i<list.length;i++) {
-    const blob=await renderQSL(list[i]);
+    let blob;
+    try { blob = await renderQSL(list[i]); }
+    catch(err) { alert('Errore generazione: ' + err.message); return; }
     genBlobs.push({blob,call:list[i].CALL||'QSO',qso:list[i]});
     appendPreview(blob,list[i]);
     document.getElementById('pfill').style.width=((i+1)/list.length*100)+'%';
@@ -1588,28 +1596,38 @@ function appendPreview(blob,qso) {
 }
 
 async function renderQSL(qso) {
-  return new Promise(res=>{
-    const cv=document.getElementById('gen-canvas');
-    cv.width=qslImgEl.width; cv.height=qslImgEl.height;
-    const ctx=cv.getContext('2d');
-    ctx.drawImage(qslImgEl,0,0);
+  return new Promise((res, rej) => {
+    try {
+      const cv  = document.getElementById('gen-canvas');
+      cv.width  = qslImgEl.width;
+      cv.height = qslImgEl.height;
+      const ctx = cv.getContext('2d');
+      ctx.drawImage(qslImgEl, 0, 0);
 
-    Object.entries(placed).forEach(([key,cfg])=>{
-      const v=qsoVal(key,qso); if(!v||v==='-') return;
-      ctx.save();
-      ctx.font=`${cfg.bold?'bold ':''}${cfg.fontSize}px "${cfg.fontFamily}"`;
-      ctx.fillStyle=cfg.color;
-      ctx.textBaseline='top';
-      ctx.textAlign=cfg.align||'left';
-      if (cfg.shadow!==false) {
-        ctx.shadowColor='rgba(0,0,0,0.8)';
-        ctx.shadowBlur=Math.max(3,cfg.fontSize*0.1);
-        ctx.shadowOffsetX=1; ctx.shadowOffsetY=1;
-      }
-      ctx.fillText(v, (cfg.x/100)*cv.width, (cfg.y/100)*cv.height);
-      ctx.restore();
-    });
-    cv.toBlob(b=>res(b),'image/png');
+      Object.entries(placed).forEach(([key, cfg]) => {
+        const v = qsoVal(key, qso); if (!v || v === '-') return;
+        ctx.save();
+        ctx.font         = `${cfg.bold ? 'bold ' : ''}${cfg.fontSize}px "${cfg.fontFamily}"`;
+        ctx.fillStyle    = cfg.color;
+        ctx.textBaseline = 'top';
+        ctx.textAlign    = cfg.align || 'left';
+        if (cfg.shadow !== false) {
+          ctx.shadowColor   = 'rgba(0,0,0,0.8)';
+          ctx.shadowBlur    = Math.max(3, cfg.fontSize * 0.1);
+          ctx.shadowOffsetX = 1;
+          ctx.shadowOffsetY = 1;
+        }
+        ctx.fillText(v, (cfg.x / 100) * cv.width, (cfg.y / 100) * cv.height);
+        ctx.restore();
+      });
+
+      cv.toBlob(b => {
+        if (!b) { rej(new Error('toBlob null — canvas tainted o non supportato')); return; }
+        res(b);
+      }, 'image/png');
+    } catch (err) {
+      rej(err);
+    }
   });
 }
 

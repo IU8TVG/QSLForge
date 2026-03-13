@@ -1,4 +1,4 @@
-# QSLforge v1.0b
+# QSLforge v1.1b
 
 **Amateur Radio QSL Card Generator**  
 *by IU8TVG*
@@ -17,7 +17,7 @@ No server, no registration, no data collection — everything runs locally in yo
 - Import ADIF log files (`.adi` / `.adif`)
 - Drag & drop field placement with live preview (mouse and touch)
 - Per-field settings: font, size, color, bold, shadow, alignment
-- **Global text style** — apply font size and/or color to all fields at once; values used as defaults for new fields
+- **Global text style** — apply font family, size and/or color to all fields at once; values used as defaults for new fields
 - Date formatted as DD/MM/YYYY, time as HH:MM
 - Light / dark UI theme toggle
 - **Collapsible panels** — image upload panel auto-closes after loading
@@ -42,7 +42,7 @@ No server, no registration, no data collection — everything runs locally in yo
 ## Usage
 
 1. Open `index.html` in any modern browser — no installation needed.
-2. **Step 1 — Setup**: load your QSL image (remembered on next visit), click fields to place them, drag to position. Use the global style panel to set a common font size and color.
+2. **Step 1 — Setup**: load your QSL image (remembered on next visit), click fields to place them, drag to position. Use the global style panel to set a common font family, size and color.
 3. **Step 2 — Import log**: load your `.adi` / `.adif` file, select the QSOs.
 4. **Step 3 — Generate**: generate all cards and download as PNG or ZIP.
 
@@ -101,14 +101,23 @@ For fully offline operation, download the fonts and embed them in the HTML file.
 
 ## Changelog
 
+### v1.1b *(2026)*
+- Fixed position and font size mismatch between preview and final render
+- Added global font family selector with persist and per-field default
+- Collapsible panels with localStorage state persistence
+- Image panel auto-collapses after image load
+- POTA\_REF, SOTA\_REF, WWFF\_REF fields added
+- First-visit disclaimer and AI disclosure modal
+- Error handling in QSL generation with user-visible messages
+- `data-i18n` attribute system for easier localisation
+
 ### v1.0b *(2026)*
 - Initial public beta release
 - ADIF import with field placement on QSL image
 - IndexedDB image persistence with localStorage fallback
-- Light/dark theme, collapsible panels, touch drag support
+- Light/dark theme, touch drag support
 - Global text style (size + color) with per-field override
 - Language switcher (IT/EN) with external `locales/` JSON files
-- First-visit disclaimer and AI disclosure modal
 - Export/import layout configuration as JSON
 - PNG download (single) and ZIP batch download
 
