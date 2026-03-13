@@ -177,6 +177,28 @@ header::after {
   letter-spacing: 2px; color: var(--accent); margin-bottom: 13px;
   display: flex; align-items: center; gap: 6px;
 }
+/* collapsible cards */
+.card-title.collapsible {
+  cursor: pointer; user-select: none; margin-bottom: 0;
+  justify-content: space-between;
+}
+.card-title.collapsible:hover { color: var(--text); }
+.card-title.collapsible .caret {
+  font-size: 9px; transition: transform 0.25s; opacity: 0.6; flex-shrink: 0;
+}
+.card-title.collapsible.collapsed .caret { transform: rotate(-90deg); }
+.card-body {
+  overflow: hidden;
+  max-height: 2000px;
+  transition: max-height 0.3s ease, opacity 0.25s ease, margin-top 0.25s ease;
+  opacity: 1;
+  margin-top: 13px;
+}
+.card-body.collapsed {
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
+}
 
 /* ===== UPLOAD ===== */
 .upload-zone {
@@ -396,6 +418,37 @@ tr.sel-row td { background: rgba(128,200,255,0.07); }
 .modal-footer .copy {
   font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--text-dim);
 }
+.lang-wrap {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 20px; padding: 5px 10px 5px 8px;
+  transition: border-color 0.2s;
+}
+.lang-wrap:hover { border-color: var(--accent); }
+.lang-globe { font-size: 14px; line-height: 1; }
+.lang-select {
+  background: transparent; border: none; outline: none;
+  color: var(--text); font-family: 'Orbitron', sans-serif;
+  font-size: 10px; font-weight: 700; letter-spacing: 1px;
+  cursor: pointer; padding: 0;
+  /* dropdown arrow color per theme */
+  appearance: none; -webkit-appearance: none;
+  padding-right: 14px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2300d4ff'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0px center;
+}
+[data-theme="light"] .lang-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%230077aa'/%3E%3C/svg%3E");
+}
+.lang-select option {
+  background: var(--surface2); color: var(--text);
+  font-family: sans-serif; font-size: 13px;
+}
+@media (max-width: 768px) {
+  .lang-globe { display: none; }
+  .lang-wrap { padding: 5px 8px; }
+}
 </style>
 </head>
 <body>
@@ -411,6 +464,10 @@ tr.sel-row td { background: rgba(128,200,255,0.07); }
       <span>📖</span>
       <span class="theme-label">GUIDA</span>
     </button>
+    <div class="lang-wrap">
+      <span class="lang-globe">🌍</span>
+      <select id="lang-select" class="lang-select" onchange="switchLang(this.value)" title="Cambia lingua / Change language"></select>
+    </div>
     <button class="theme-btn" onclick="toggleTheme()">
       <span id="theme-icon">☀️</span>
       <span class="theme-label" id="theme-lbl">GIORNO</span>
@@ -522,24 +579,48 @@ tr.sel-row td { background: rgba(128,200,255,0.07); }
     <div style="display:flex;flex-direction:column;gap:13px;overflow-y:visible;padding-right:4px;">
 
       <div class="card">
-        <div class="card-title">📷 IMMAGINE QSL</div>
-        <div class="upload-zone" id="img-drop" onclick="document.getElementById('img-file').click()">
-          <span class="icon">🖼️</span>
-          <p><strong>Carica immagine QSL</strong><br>JPG · PNG · WebP<br>Trascina o clicca</p>
+        <div class="card-title collapsible" id="ct-img" onclick="toggleCard('img')">
+          <span>📷 IMMAGINE QSL</span>
+          <span class="caret">▼</span>
         </div>
-        <input type="file" id="img-file" accept="image/*" class="hidden">
-        <div id="img-status" style="margin-top:8px;"></div>
+        <div class="card-body" id="cb-img">
+          <div class="upload-zone" id="img-drop" onclick="document.getElementById('img-file').click()">
+            <span class="icon">🖼️</span>
+            <p><strong>Carica immagine QSL</strong><br>JPG · PNG · WebP<br>Trascina o clicca</p>
+          </div>
+          <input type="file" id="img-file" accept="image/*" class="hidden">
+          <div id="img-status" style="margin-top:8px;"></div>
+        </div>
       </div>
 
       <div class="card">
-        <div class="card-title">📋 CAMPI DISPONIBILI</div>
-        <p class="info-text">Clicca per aggiungere · trascina per posizionare · clicca di nuovo per editare</p>
-        <div id="fields-list"></div>
+        <div class="card-title collapsible" id="ct-fields" onclick="toggleCard('fields')">
+          <span>📋 CAMPI DISPONIBILI</span>
+          <span class="caret">▼</span>
+        </div>
+        <div class="card-body" id="cb-fields">
+          <p class="info-text">Clicca per aggiungere · trascina per posizionare · clicca di nuovo per editare</p>
+          <div id="fields-list"></div>
+        </div>
       </div>
 
       <div class="card" id="fset-card" style="display:none;">
         <div class="card-title">⚙️ IMPOSTAZIONI CAMPO</div>
         <div id="fset-content"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🔤 DIMENSIONE TESTO GLOBALE</div>
+        <p class="info-text">Applica la stessa dimensione font a tutti i campi posizionati in un colpo solo.</p>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <div class="ig" style="flex:1;min-width:80px;">
+            <label>DIMENSIONE (px)</label>
+            <input type="number" id="global-fs" value="28" min="6" max="400" style="width:100%;">
+          </div>
+          <button class="btn btn-primary" onclick="applyGlobalFontSize()" style="margin-top:14px;">
+            ✓ APPLICA A TUTTI
+          </button>
+        </div>
       </div>
 
       <div class="card">
@@ -741,10 +822,12 @@ let isDark      = true;
 async function boot() {
   await loadLocale(lang);
   loadTheme();
+  populateLangSelect();
   loadPlaced();
   renderFields();
   wireDrops();
   wireImportCfg();
+  restoreCollapsed();
 }
 
 /* ============================================================
@@ -764,6 +847,53 @@ function applyTheme() {
   document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
   document.getElementById('theme-icon').textContent = isDark ? '☀️' : '🌙';
   document.getElementById('theme-lbl').textContent  = isDark ? t('theme.day') : t('theme.night');
+}
+
+/* ============================================================
+   LANGUAGE SWITCHER
+   ============================================================ */
+// Add an entry here when you add a new locales/xx.json file
+const LANGS = [
+  { code: 'it', label: 'Italiano' },
+  { code: 'en', label: 'English'  },
+  // { code: 'de', label: 'Deutsch' },
+  // { code: 'fr', label: 'Français' },
+  // { code: 'es', label: 'Español' },
+];
+
+function populateLangSelect() {
+  const sel = document.getElementById('lang-select');
+  if (!sel) return;
+  sel.innerHTML = LANGS.map(l =>
+    `<option value="${l.code}" ${l.code === lang ? 'selected' : ''}>${l.label}</option>`
+  ).join('');
+}
+
+async function switchLang(code) {
+  lang = code;
+  localStorage.setItem('qslforge_lang', lang);
+  await loadLocale(lang);
+  applyTheme();    // re-render theme labels in new lang
+  renderFields();  // re-render field descriptions
+}
+
+/* ============================================================
+   GLOBAL FONT SIZE
+   ============================================================ */
+function applyGlobalFontSize() {
+  const val = parseInt(document.getElementById('global-fs').value);
+  if (isNaN(val) || val < 6 || val > 400) {
+    alert('Inserisci un valore tra 6 e 400');
+    return;
+  }
+  const keys = Object.keys(placed);
+  if (!keys.length) { alert('Nessun campo posizionato!'); return; }
+  keys.forEach(k => { placed[k].fontSize = val; });
+  savePlaced();
+  renderOv();
+  // if a field settings panel is open, refresh it
+  if (selKey) showFSet(selKey);
+  flashSaved();
 }
 
 /* ============================================================
@@ -1219,6 +1349,49 @@ function ldScript(src) { return new Promise((r,j)=>{ if(document.querySelector(`
 function tick() { return new Promise(r=>setTimeout(r,10)); }
 function clamp(v,a,b) { return Math.max(a,Math.min(b,v)); }
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+/* ============================================================
+   COLLAPSIBLE CARDS
+   ============================================================ */
+const COLLAPSED_KEY = 'qslforge_collapsed';
+
+function loadCollapsed() {
+  try {
+    const raw = localStorage.getItem(COLLAPSED_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch { return {}; }
+}
+
+function saveCollapsed(state) {
+  try { localStorage.setItem(COLLAPSED_KEY, JSON.stringify(state)); } catch {}
+}
+
+function toggleCard(id) {
+  const title = document.getElementById('ct-' + id);
+  const body  = document.getElementById('cb-' + id);
+  if (!title || !body) return;
+  const isCollapsed = body.classList.toggle('collapsed');
+  title.classList.toggle('collapsed', isCollapsed);
+  const state = loadCollapsed();
+  state[id] = isCollapsed;
+  saveCollapsed(state);
+}
+
+function restoreCollapsed() {
+  const state = loadCollapsed();
+  Object.entries(state).forEach(([id, isCollapsed]) => {
+    if (!isCollapsed) return;
+    const title = document.getElementById('ct-' + id);
+    const body  = document.getElementById('cb-' + id);
+    if (title && body) {
+      // Set instantly without animation on load
+      body.style.transition = 'none';
+      body.classList.add('collapsed');
+      title.classList.add('collapsed');
+      requestAnimationFrame(() => { body.style.transition = ''; });
+    }
+  });
+}
 
 /* ============================================================
    HELP MODAL
