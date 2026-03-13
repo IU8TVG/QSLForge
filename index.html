@@ -671,6 +671,19 @@ tr.sel-row td { background: rgba(128,200,255,0.07); }
               </div>
             </div>
           </div>
+          <div class="ig" style="width:100%;">
+            <label data-i18n="global.font">FONT</label>
+            <select id="global-font" onchange="saveGlobalDefaults()" style="width:100%;">
+              <option>Arial</option>
+              <option>Arial Black</option>
+              <option>Courier New</option>
+              <option>Georgia</option>
+              <option>Impact</option>
+              <option>Trebuchet MS</option>
+              <option>Verdana</option>
+              <option>Times New Roman</option>
+            </select>
+          </div>
           <div style="display:flex;gap:7px;flex-wrap:wrap;">
             <button class="btn btn-primary" onclick="applyGlobalStyle('both')" style="flex:1;" data-i18n="global.apply_all">
               ✓ APPLICA TUTTO
@@ -680,6 +693,9 @@ tr.sel-row td { background: rgba(128,200,255,0.07); }
             </button>
             <button class="btn btn-secondary" onclick="applyGlobalStyle('color')" style="font-size:9px;padding:6px 10px;" data-i18n="global.apply_color">
               SOLO COLORE
+            </button>
+            <button class="btn btn-secondary" onclick="applyGlobalStyle('font')" style="font-size:9px;padding:6px 10px;" data-i18n="global.apply_font">
+              SOLO FONT
             </button>
           </div>
         </div>
@@ -837,7 +853,9 @@ const I18N_BUILTIN = {
     "global.color":           "COLORE",
     "global.apply_all":       "✓ APPLICA TUTTO",
     "global.apply_size":      "SOLO DIM.",
-    "global.apply_color":     "SOLO COLORE"
+    "global.apply_color":     "SOLO COLORE",
+    "global.apply_font":      "SOLO FONT",
+    "global.font":            "FONT"
   }
 };
 
@@ -980,9 +998,10 @@ async function switchLang(code) {
 const LS_GLOBAL = 'qslforge_global_style';
 
 function saveGlobalDefaults() {
-  const fs  = parseInt(document.getElementById('global-fs').value);
-  const col = document.getElementById('global-color').value;
-  try { localStorage.setItem(LS_GLOBAL, JSON.stringify({ fontSize: fs, color: col })); } catch {}
+  const fs   = parseInt(document.getElementById('global-fs').value);
+  const col  = document.getElementById('global-color').value;
+  const font = document.getElementById('global-font').value;
+  try { localStorage.setItem(LS_GLOBAL, JSON.stringify({ fontSize: fs, color: col, fontFamily: font })); } catch {}
 }
 
 function loadGlobalDefaults() {
@@ -997,17 +1016,21 @@ function loadGlobalDefaults() {
       document.getElementById('global-color').value = d.color;
       document.getElementById('global-color-val').textContent = d.color;
     }
+    if (d.fontFamily) {
+      document.getElementById('global-font').value = d.fontFamily;
+    }
   } catch {}
 }
 
 function getGlobalDefaults() {
-  const fs  = parseInt(document.getElementById('global-fs').value) || 28;
-  const col = document.getElementById('global-color').value || '#ffffff';
-  return { fontSize: fs, color: col };
+  const fs   = parseInt(document.getElementById('global-fs').value) || 28;
+  const col  = document.getElementById('global-color').value || '#ffffff';
+  const font = document.getElementById('global-font').value  || 'Arial';
+  return { fontSize: fs, color: col, fontFamily: font };
 }
 
 function applyGlobalStyle(mode) {
-  const { fontSize, color } = getGlobalDefaults();
+  const { fontSize, color, fontFamily } = getGlobalDefaults();
   if (mode !== 'color' && (isNaN(fontSize) || fontSize < 6 || fontSize > 400)) {
     alert('Inserisci una dimensione valida (6–400)');
     return;
@@ -1015,8 +1038,9 @@ function applyGlobalStyle(mode) {
   const keys = Object.keys(placed);
   if (!keys.length) { alert('Nessun campo posizionato!'); return; }
   keys.forEach(k => {
-    if (mode === 'both' || mode === 'size')  placed[k].fontSize = fontSize;
-    if (mode === 'both' || mode === 'color') placed[k].color    = color;
+    if (mode === 'both' || mode === 'size')  placed[k].fontSize   = fontSize;
+    if (mode === 'both' || mode === 'color') placed[k].color      = color;
+    if (mode === 'both' || mode === 'font')  placed[k].fontFamily = fontFamily;
   });
   saveGlobalDefaults();
   savePlaced();
@@ -1253,7 +1277,7 @@ function addField(key) {
   if (!qslImgEl) { alert('Carica prima l\'immagine QSL!'); return; }
   if (!placed[key]) {
     const gd = getGlobalDefaults();
-    placed[key] = { x:50, y:50, fontSize:gd.fontSize, color:gd.color, bold:false, fontFamily:'Arial', shadow:true, align:'left' };
+    placed[key] = { x:50, y:50, fontSize:gd.fontSize, color:gd.color, bold:false, fontFamily:gd.fontFamily, shadow:true, align:'left' };
   }
   savePlaced(); renderOv(); renderFields(); selectKey(key);
 }

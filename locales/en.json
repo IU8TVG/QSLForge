@@ -40,5 +40,7 @@
   "global.color":           "COLOR",
   "global.apply_all":       "✓ APPLY ALL",
   "global.apply_size":      "SIZE ONLY",
-  "global.apply_color":     "COLOR ONLY"
+  "global.apply_color":     "COLOR ONLY",
+  "global.apply_font":      "FONT ONLY",
+  "global.font":            "FONT"
 }
